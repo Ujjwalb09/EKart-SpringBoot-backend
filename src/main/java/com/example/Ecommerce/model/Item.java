@@ -18,6 +18,7 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @Column(name = "requiredQuantity")
     int requiredQuantity;
 
     @ManyToOne

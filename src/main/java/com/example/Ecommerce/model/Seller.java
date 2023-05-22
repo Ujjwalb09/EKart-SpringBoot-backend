@@ -20,12 +20,13 @@ public class Seller {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @Column(name = "name")
     String name;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "emailId", unique = true, nullable = false)
     String emailId;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "mobNo", unique = true, nullable = false)
     String mobNo;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)

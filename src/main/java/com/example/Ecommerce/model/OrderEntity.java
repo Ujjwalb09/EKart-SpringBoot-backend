@@ -22,13 +22,17 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @Column(name = "orderNo")
     String orderNo;
 
+    @Column(name = "totalValue")
     int totalValue;
 
+    @Column(name = "orderDate")
     @CreationTimestamp
     Date orderDate;
 
+    @Column(name = "cardUsed")
     String cardUsed;
 
     @ManyToOne

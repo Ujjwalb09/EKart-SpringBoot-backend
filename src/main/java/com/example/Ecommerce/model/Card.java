@@ -20,13 +20,16 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "cardNo", unique = true, nullable = false)
     String cardNo;
 
+    @Column(name = "cvv")
     int cvv;
 
+    @Column(name = "cardType")
     CardType cardType;
 
+    @Column(name = "validTill")
     Date validTill;
 
     @ManyToOne

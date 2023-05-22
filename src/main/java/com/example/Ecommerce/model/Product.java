@@ -22,14 +22,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @Column(name = "name")
     String name;
 
+    @Column(name = "category")
     Category category;
 
+    @Column(name = "price")
     Integer price;
 
+    @Column(name = "quantity")
     Integer quantity;
 
+    @Column(name = "productStatus")
+    @Enumerated(EnumType.STRING)
     ProductStatus productStatus;
 
     @ManyToOne

@@ -20,6 +20,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @Column(name = "cartTotal")
     int cartTotal;
 
     @OneToOne
