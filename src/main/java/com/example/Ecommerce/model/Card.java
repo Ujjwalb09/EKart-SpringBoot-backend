@@ -27,6 +27,7 @@ public class Card {
     int cvv;
 
     @Column(name = "cardType")
+    @Enumerated(EnumType.STRING)
     CardType cardType;
 
     @Column(name = "validTill")
