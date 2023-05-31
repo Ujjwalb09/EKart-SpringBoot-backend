@@ -1,7 +1,9 @@
 package com.example.Ecommerce.controller;
 
+import com.example.Ecommerce.dto.RequestDto.CheckoutCartRequestDto;
 import com.example.Ecommerce.dto.RequestDto.ItemRequestDto;
 import com.example.Ecommerce.dto.ResponseDto.CartResponseDto;
+import com.example.Ecommerce.dto.ResponseDto.OrderResponseDto;
 import com.example.Ecommerce.model.Item;
 import com.example.Ecommerce.service.CartService;
 import com.example.Ecommerce.service.ItemService;
@@ -31,4 +33,19 @@ public class CartController {
              return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/checkout") //correct the bug
+    public ResponseEntity checkoutCart(@RequestBody CheckoutCartRequestDto checkoutCartRequestDto){
+        try {
+            OrderResponseDto orderResponseDto = cartService.checkoutCart(checkoutCartRequestDto);
+            return new ResponseEntity(orderResponseDto, HttpStatus.CREATED);
+        } catch (Exception e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    //add the functionality of email sending in direct order and checkout cart
+    //kunaljindal995@gmail.com
+
+    //integrate swagger
 }

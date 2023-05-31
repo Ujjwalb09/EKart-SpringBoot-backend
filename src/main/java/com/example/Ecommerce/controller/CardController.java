@@ -31,3 +31,7 @@ public class CardController {
         }
     }
 }
+
+//tell me the card type which exists max no. of time
+
+////tell me the card type which exists min no. of time

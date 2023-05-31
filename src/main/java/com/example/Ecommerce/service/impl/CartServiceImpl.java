@@ -1,19 +1,24 @@
 package com.example.Ecommerce.service.impl;
 
+import com.example.Ecommerce.dto.RequestDto.CheckoutCartRequestDto;
 import com.example.Ecommerce.dto.RequestDto.ItemRequestDto;
 import com.example.Ecommerce.dto.ResponseDto.CartResponseDto;
-import com.example.Ecommerce.model.Cart;
-import com.example.Ecommerce.model.Customer;
-import com.example.Ecommerce.model.Item;
-import com.example.Ecommerce.model.Product;
-import com.example.Ecommerce.repository.CartRepository;
-import com.example.Ecommerce.repository.CustomerRepository;
-import com.example.Ecommerce.repository.ProductRepository;
+import com.example.Ecommerce.dto.ResponseDto.OrderResponseDto;
+import com.example.Ecommerce.exception.CustomerNotFoundException;
+import com.example.Ecommerce.exception.EmptyCartException;
+import com.example.Ecommerce.exception.InsufficientQuantityException;
+import com.example.Ecommerce.exception.InvalidCardException;
+import com.example.Ecommerce.model.*;
+import com.example.Ecommerce.repository.*;
 import com.example.Ecommerce.service.CartService;
+import com.example.Ecommerce.service.OrderService;
 import com.example.Ecommerce.transfomer.CartTransformer;
+import com.example.Ecommerce.transfomer.OrderTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -27,6 +32,14 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    CardRepository cardRepository;
+
+    @Autowired
+    OrderService orderService;
+    @Autowired
+    OrderRepository orderRepository;
     @Override
     public CartResponseDto addTocart(Item item, ItemRequestDto itemRequestDto) {
 
@@ -48,5 +61,47 @@ public class CartServiceImpl implements CartService {
         CartResponseDto cartResponseDto = CartTransformer.cartToCartResponseDto(savedCart);
 
         return cartResponseDto;
+    }
+
+    public OrderResponseDto checkoutCart(CheckoutCartRequestDto checkoutCartRequestDto) throws CustomerNotFoundException, InvalidCardException, EmptyCartException, InsufficientQuantityException {
+
+        //check customer
+        Customer customer = customerRepository.findByEmailId(checkoutCartRequestDto.getEmailId());
+        if(customer==null){
+            throw new CustomerNotFoundException("Customer does not exist!");
+        }
+
+        //check card
+        Card card = cardRepository.findByCardNo(checkoutCartRequestDto.getCardNo());
+        Date date = new Date();
+        if(card==null || card.getCvv()!= checkoutCartRequestDto.getCvv() || date.after(card.getValidTill())){
+            throw new InvalidCardException("Sorry! You cant use this card");
+        }
+
+        Cart cart = customer.getCart();
+        if(cart.getItems().size()==0){
+            throw new EmptyCartException("Cart is Empty!");
+        }
+
+        try{
+            OrderEntity order = orderService.placeOrder(cart, card);
+            resetCart(cart);
+
+            OrderEntity savedOrder = orderRepository.save(order);
+            customer.getOrders().add(savedOrder);
+            return OrderTransformer.orderToOrderResponseDto(savedOrder);
+        } catch(InsufficientQuantityException e){
+            throw e;
+        }
+
+    }
+
+    private void resetCart(Cart cart){
+        cart.setCartTotal(0);
+
+        for(Item item: cart.getItems())
+            item.setCart(null);
+
+        cart.setItems(new ArrayList<>());
     }
 }

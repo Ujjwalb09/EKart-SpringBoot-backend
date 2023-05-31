@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ItemTransformer {
 
-    public static Item ItemRequestDtoToItem(Product product, Customer customer, int quantity){
+    public static Item ItemRequestDtoToItem(int quantity){
 
         return Item.builder()
                 .requiredQuantity(quantity)
